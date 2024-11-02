@@ -1,4 +1,4 @@
-import { sendConfirmationEmail } from "@/app/api/checkout/route";
+import { sendConfirmationEmail } from "@/app/lib/send-confirmation-email";
 import { NextRequest } from "next/server";
 import prisma from "../../../../../../prisma";
 
