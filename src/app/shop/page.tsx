@@ -318,17 +318,32 @@ const CartPage = ({
   const [formDataCheckout, setFormDataCheckout] = useState<IFormDataCheckout>();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    const modal = document.getElementById(
-      "confirm_checkout_modal",
-    ) as HTMLDialogElement;
-    modal.showModal();
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    formData.delete("image");
-    formData.set("bukti_pembayaran", image);
-    setFormDataCheckout(
-      Object.fromEntries(formData) as unknown as IFormDataCheckout,
-    );
+    if (!image) {
+      toast.warning("Bukti pembayaran harus diisi!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    } else {
+      const modal = document.getElementById(
+        "confirm_checkout_modal",
+      ) as HTMLDialogElement;
+      modal.showModal();
+      const formData = new FormData(e.currentTarget);
+      formData.delete("image");
+      const metodePembayaran = formData.get("metode_pembayaran");
+      formData.set("bukti_pembayaran", metodePembayaran != "cod" ? image : "");
+      setFormDataCheckout(
+        Object.fromEntries(formData) as unknown as IFormDataCheckout,
+      );
+    }
   };
 
   return (
