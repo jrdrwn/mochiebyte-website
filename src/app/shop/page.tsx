@@ -407,7 +407,7 @@ const CartPage = ({
               );
               return (
                 <div key={idx} className="flex items-center justify-between">
-                  <div className="flex gap-4">
+                  <div className="flex items-center gap-4">
                     <img
                       src={product.image}
                       alt={product.name}
@@ -421,7 +421,7 @@ const CartPage = ({
                           ? product.price + selectedTopping.price
                           : product.price}
                       </p>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         {item.flavorid != 0 && (
                           <span className="badge">
                             Rasa:{" "}
