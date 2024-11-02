@@ -1,0 +1,91 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
+}
+
+model Product {
+  id Int @id @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name String
+  description String
+  price Float
+  flavors Flavor[]
+  toppings Topping[]
+  image String
+
+  OrderItem OrderItem[]
+}
+
+model Flavor{
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  productId Int
+  name String
+  product Product @relation(fields: [productId], references: [id])
+
+  OrderItem OrderItem[]
+}
+
+model Topping {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name String
+  price Float
+  productId Int
+  product Product @relation(fields: [productId], references: [id])
+  OrderItem OrderItem[]
+}
+
+model OrderItem {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orderId Int
+  productid Int
+  flavorid Int?
+  toppingid Int?
+  quantity Int
+
+  product Product @relation(fields: [productid], references: [id])
+  flavor Flavor? @relation(fields: [flavorid], references: [id])
+  topping Topping? @relation(fields: [toppingid], references: [id])
+
+  Order Order @relation(fields: [orderId], references: [id])
+}
+
+
+model Order {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  code String
+  status String
+  userId Int
+  orderItem OrderItem[]
+  user User @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name String
+  email String
+  telpon String
+  alamat String
+  catatan String?
+  metode_pembayaran String
+  bukti_pembayaran String?
+
+  Order Order[]
+}
+
+
+
