@@ -94,7 +94,7 @@ const ProductCard = ({
   }, []);
 
   useEffect(() => {
-    if (topping !== -1) {
+    if (topping) {
       const selectedTopping = product.toppings?.find((t) => t.id === topping);
       if (selectedTopping) {
         setPrice((selectedTopping.price + product.price) * quantity);
@@ -103,7 +103,7 @@ const ProductCard = ({
   }, [topping]);
 
   useEffect(() => {
-    if (topping != -1) {
+    if (topping) {
       const selectedTopping = product.toppings?.find((t) => t.id === topping);
       if (selectedTopping) {
         setPrice((selectedTopping.price + product.price) * quantity);
@@ -138,9 +138,9 @@ const ProductCard = ({
             <select
               className="select select-bordered select-xs max-w-xs"
               onChange={(e) => setFlavor(parseInt(e.target.value))}
-              defaultValue={"-1"}
+              defaultValue={"0"}
             >
-              <option value="-1" disabled>
+              <option value="0" disabled>
                 Pilih Rasa
               </option>
               {product.flavors.map((flavor) => (
@@ -154,9 +154,9 @@ const ProductCard = ({
             <select
               className="select select-bordered select-xs max-w-xs"
               onChange={(e) => setTopping(parseInt(e.target.value))}
-              defaultValue={"-1"}
+              defaultValue={"0"}
             >
-              <option value="-1" disabled>
+              <option value="0" disabled>
                 Pilih Topping
               </option>
               {product.toppings.map((topping) => (
@@ -269,9 +269,8 @@ const CartPage = ({
         if (data) {
           setCart([]);
           setOpenCart(false);
-          toast.success(
-            "Pesanan berhasil di checkout! dan kode pesanan sudah dikirim melalui email.",
-            {
+          if (data.transaction) {
+            toast.success("Pesanan berhasil di checkout!", {
               position: "top-right",
               autoClose: 5000,
               hideProgressBar: false,
@@ -281,10 +280,28 @@ const CartPage = ({
               progress: undefined,
               theme: "light",
               transition: Bounce,
-            },
-          );
+            });
+            router.push(
+              `/pesanan?code=${data?.orderCode}&midtrans_token=${data?.transaction?.token}`,
+            );
+          } else {
+            toast.success(
+              "Pesanan berhasil di checkout! dan kode pesanan sudah dikirim melalui email.",
+              {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+              },
+            );
 
-          router.push(`/pesanan?code=${data?.orderCode}`);
+            router.push(`/pesanan?code=${data?.orderCode}`);
+          }
         } else {
           toast.error("Gagal checkout!", {
             position: "top-right",
@@ -312,6 +329,9 @@ const CartPage = ({
           theme: "light",
           transition: Bounce,
         });
+      })
+      .finally(() => {
+        setLoadingCheckout(false);
       });
   };
 
@@ -319,7 +339,9 @@ const CartPage = ({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!image) {
+    const formData = new FormData(e.currentTarget);
+    const metodePembayaran = formData.get("metode_pembayaran");
+    if (!image && metodePembayaran == "tf") {
       toast.warning("Bukti pembayaran harus diisi!", {
         position: "top-right",
         autoClose: 5000,
@@ -336,10 +358,8 @@ const CartPage = ({
         "confirm_checkout_modal",
       ) as HTMLDialogElement;
       modal.showModal();
-      const formData = new FormData(e.currentTarget);
       formData.delete("image");
-      const metodePembayaran = formData.get("metode_pembayaran");
-      formData.set("bukti_pembayaran", metodePembayaran != "cod" ? image : "");
+      formData.set("bukti_pembayaran", metodePembayaran == "tf" ? image : "");
       setFormDataCheckout(
         Object.fromEntries(formData) as unknown as IFormDataCheckout,
       );
@@ -523,6 +543,9 @@ const CartPage = ({
                   </option>
                   <option value="cod">COD</option>
                   <option value="tf">Transfer Bank</option>
+                  <option value="midtrans">
+                    Semua Pembayaran termasuk QRIS
+                  </option>
                 </select>
                 {pembayaran === "tf" && (
                   <div className="form-control mx-auto w-full">
