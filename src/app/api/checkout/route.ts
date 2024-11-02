@@ -55,7 +55,7 @@ export async function POST(req: Request) {
   });
 
   await sendMail({
-    email: "info@mochiebyte.shop",
+    email: `${process.env.MAIL_FROM_NAME} <${process.env.MAIL_FROM_ADDRESS}>`,
     subject: `[MochieByte] Konfirmasi Pesanan Anda di MochieByte [No. Pesanan: #${order.code}]`,
     text: `Halo ${body.name},
 
