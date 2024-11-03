@@ -281,9 +281,7 @@ const CartPage = ({
               theme: "light",
               transition: Bounce,
             });
-            router.push(
-              `/pesanan?code=${data?.orderCode}&midtrans_token=${data?.transaction?.token}`,
-            );
+            router.push(`/pesanan?code=${data?.orderCode}`);
           } else {
             toast.success(
               "Pesanan berhasil di checkout! dan kode pesanan sudah dikirim melalui email.",
@@ -341,6 +339,20 @@ const CartPage = ({
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const metodePembayaran = formData.get("metode_pembayaran");
+    if (cart.length < 1) {
+      toast.error("Keranjang kosong!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
     if (!image && metodePembayaran == "tf") {
       toast.warning("Bukti pembayaran harus diisi!", {
         position: "top-right",
@@ -542,7 +554,7 @@ const CartPage = ({
                     Metode Pembayaran
                   </option>
                   <option value="cod">COD</option>
-                  <option value="tf">Transfer Bank</option>
+                  <option value="tf">E-wallet ( DANA )</option>
                   <option value="midtrans">
                     Semua Pembayaran termasuk QRIS
                   </option>
@@ -551,6 +563,9 @@ const CartPage = ({
                   <div className="form-control mx-auto w-full">
                     <label className="label" htmlFor="upload-image">
                       <span className="label-text">Bukti Pembayaran</span>
+                      <span className="label-text">
+                        DANA: 082250561358 AN (NORUL ANNISA)
+                      </span>
                     </label>
                     <div className="">
                       {image && (
@@ -731,8 +746,54 @@ const Shop = () => {
         setOpenCart={setOpenCart}
       />
       <div className="container relative mx-auto p-8">
+        <div className="flex flex-wrap justify-between">
+          <div className="text-center">
+            <img src="/images/logo-big.png" className="w-full md:w-40" />
+          </div>
+          <div className="flex flex-wrap items-start gap-12">
+            <div className="flex flex-col gap-4">
+              <h2 className="text-3xl font-medium">Kontak</h2>
+              <div className="flex flex-col gap-2">
+                <span>Alamat: Jurusan Teknik Informatika</span>
+                <span>
+                  Email:{" "}
+                  <a
+                    href="mailto:mochiebyte@gmail.com"
+                    className="text-primary"
+                  >
+                    mochiebyte@gmail.com{" "}
+                  </a>
+                </span>
+                <span>
+                  Cinda:{" "}
+                  <a href="tel:+6281258605454" className="text-primary">
+                    +62 812-5860-5454
+                  </a>
+                </span>
+                <span>
+                  Pute:{" "}
+                  <a href="tel:+6281348681514" className="text-primary">
+                    +62 813-4868-1514
+                  </a>
+                </span>
+              </div>
+            </div>
+            <div className="flex flex-col gap-4">
+              <h2 className="text-3xl font-medium">Ikuti Kami</h2>
+              <div className="flex flex-col gap-2">
+                <a
+                  href="https://www.instagram.com/mochiebyte/"
+                  className="link"
+                  target="_blank"
+                >
+                  Instagram
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
         <hr className="my-8 border-base-200" />
-        <div className="flex flex-wrap justify-between gap-4 text-center">
+        <div className="flex flex-wrap justify-between gap-4">
           <div className="flex gap-4">
             <a href="#" className="link">
               Kebijakan Privasi

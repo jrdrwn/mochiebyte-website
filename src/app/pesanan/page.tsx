@@ -45,7 +45,6 @@ function PesananPage() {
   const [orderCode, setOrderCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [midtransToken, setMidtransToken] = useState("");
 
   const handleSearch = async (orderCode: string) => {
     setLoading(true);
@@ -72,13 +71,9 @@ function PesananPage() {
 
   useEffect(() => {
     const orderCode = searchParams.get("code") || searchParams.get("order_id");
-    const token = searchParams.get("midtrans_token");
     if (orderCode) {
       setOrderCode(orderCode);
       handleSearch(orderCode);
-    }
-    if (token) {
-      setMidtransToken(token);
     }
   }, [searchParams]);
   const [mobileMenu, setMobileMenu] = useState(false);
