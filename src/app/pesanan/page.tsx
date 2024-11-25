@@ -157,7 +157,7 @@ function PesananPage() {
               {order.status === "menunggu-pembayaran" &&
                 order.user.metode_pembayaran === "midtrans" && (
                   <Link
-                    href={`https://app.midtrans.com/snap/v2/vtweb/${order.midtransToken}`}
+                    href={`https://app.sandbox.midtrans.com/snap/v2/vtweb/${order.midtransToken}`}
                     target="_blank"
                     className="btn btn-primary mt-4"
                   >
