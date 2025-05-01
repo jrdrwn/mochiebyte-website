@@ -94,7 +94,7 @@ const ProductCard = ({
   }, []);
 
   useEffect(() => {
-    if (topping !== -1) {
+    if (topping) {
       const selectedTopping = product.toppings?.find((t) => t.id === topping);
       if (selectedTopping) {
         setPrice((selectedTopping.price + product.price) * quantity);
@@ -103,7 +103,7 @@ const ProductCard = ({
   }, [topping]);
 
   useEffect(() => {
-    if (topping != -1) {
+    if (topping) {
       const selectedTopping = product.toppings?.find((t) => t.id === topping);
       if (selectedTopping) {
         setPrice((selectedTopping.price + product.price) * quantity);
@@ -138,9 +138,9 @@ const ProductCard = ({
             <select
               className="select select-bordered select-xs max-w-xs"
               onChange={(e) => setFlavor(parseInt(e.target.value))}
-              defaultValue={"-1"}
+              defaultValue={"0"}
             >
-              <option value="-1" disabled>
+              <option value="0" disabled>
                 Pilih Rasa
               </option>
               {product.flavors.map((flavor) => (
@@ -154,9 +154,9 @@ const ProductCard = ({
             <select
               className="select select-bordered select-xs max-w-xs"
               onChange={(e) => setTopping(parseInt(e.target.value))}
-              defaultValue={"-1"}
+              defaultValue={"0"}
             >
-              <option value="-1" disabled>
+              <option value="0" disabled>
                 Pilih Topping
               </option>
               {product.toppings.map((topping) => (
@@ -269,9 +269,8 @@ const CartPage = ({
         if (data) {
           setCart([]);
           setOpenCart(false);
-          toast.success(
-            "Pesanan berhasil di checkout! dan kode pesanan sudah dikirim melalui email.",
-            {
+          if (data.transaction) {
+            toast.success("Pesanan berhasil di checkout!", {
               position: "top-right",
               autoClose: 5000,
               hideProgressBar: false,
@@ -281,10 +280,26 @@ const CartPage = ({
               progress: undefined,
               theme: "light",
               transition: Bounce,
-            },
-          );
+            });
+            router.push(`/pesanan?code=${data?.orderCode}`);
+          } else {
+            toast.success(
+              "Pesanan berhasil di checkout! dan kode pesanan sudah dikirim melalui email.",
+              {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+              },
+            );
 
-          router.push(`/pesanan?code=${data?.orderCode}`);
+            router.push(`/pesanan?code=${data?.orderCode}`);
+          }
         } else {
           toast.error("Gagal checkout!", {
             position: "top-right",
@@ -312,6 +327,9 @@ const CartPage = ({
           theme: "light",
           transition: Bounce,
         });
+      })
+      .finally(() => {
+        setLoadingCheckout(false);
       });
   };
 
@@ -319,7 +337,23 @@ const CartPage = ({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!image) {
+    const formData = new FormData(e.currentTarget);
+    const metodePembayaran = formData.get("metode_pembayaran");
+    if (cart.length < 1) {
+      toast.error("Keranjang kosong!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
+    if (!image && metodePembayaran == "tf") {
       toast.warning("Bukti pembayaran harus diisi!", {
         position: "top-right",
         autoClose: 5000,
@@ -336,10 +370,8 @@ const CartPage = ({
         "confirm_checkout_modal",
       ) as HTMLDialogElement;
       modal.showModal();
-      const formData = new FormData(e.currentTarget);
       formData.delete("image");
-      const metodePembayaran = formData.get("metode_pembayaran");
-      formData.set("bukti_pembayaran", metodePembayaran != "cod" ? image : "");
+      formData.set("bukti_pembayaran", metodePembayaran == "tf" ? image : "");
       setFormDataCheckout(
         Object.fromEntries(formData) as unknown as IFormDataCheckout,
       );
@@ -522,12 +554,18 @@ const CartPage = ({
                     Metode Pembayaran
                   </option>
                   <option value="cod">COD</option>
-                  <option value="tf">Transfer Bank</option>
+                  <option value="tf">E-wallet ( DANA )</option>
+                  <option value="midtrans">
+                    Semua Pembayaran termasuk QRIS
+                  </option>
                 </select>
                 {pembayaran === "tf" && (
                   <div className="form-control mx-auto w-full">
                     <label className="label" htmlFor="upload-image">
                       <span className="label-text">Bukti Pembayaran</span>
+                      <span className="label-text">
+                        DANA: 082250561358 AN (NORUL ANNISA)
+                      </span>
                     </label>
                     <div className="">
                       {image && (
@@ -708,8 +746,54 @@ const Shop = () => {
         setOpenCart={setOpenCart}
       />
       <div className="container relative mx-auto p-8">
+        <div className="flex flex-wrap justify-between">
+          <div className="text-center">
+            <img src="/images/logo-big.png" className="w-full md:w-40" />
+          </div>
+          <div className="flex flex-wrap items-start gap-12">
+            <div className="flex flex-col gap-4">
+              <h2 className="text-3xl font-medium">Kontak</h2>
+              <div className="flex flex-col gap-2">
+                <span>Alamat: Jurusan Teknik Informatika</span>
+                <span>
+                  Email:{" "}
+                  <a
+                    href="mailto:mochiebyte@gmail.com"
+                    className="text-primary"
+                  >
+                    mochiebyte@gmail.com{" "}
+                  </a>
+                </span>
+                <span>
+                  Cinda:{" "}
+                  <a href="tel:+6281258605454" className="text-primary">
+                    +62 812-5860-5454
+                  </a>
+                </span>
+                <span>
+                  Pute:{" "}
+                  <a href="tel:+6281348681514" className="text-primary">
+                    +62 813-4868-1514
+                  </a>
+                </span>
+              </div>
+            </div>
+            <div className="flex flex-col gap-4">
+              <h2 className="text-3xl font-medium">Ikuti Kami</h2>
+              <div className="flex flex-col gap-2">
+                <a
+                  href="https://www.instagram.com/mochiebyte/"
+                  className="link"
+                  target="_blank"
+                >
+                  Instagram
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
         <hr className="my-8 border-base-200" />
-        <div className="flex flex-wrap justify-between gap-4 text-center">
+        <div className="flex flex-wrap justify-between gap-4">
           <div className="flex gap-4">
             <a href="#" className="link">
               Kebijakan Privasi

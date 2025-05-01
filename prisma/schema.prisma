@@ -68,6 +68,7 @@ model Order {
   code String
   status String
   userId Int
+  midtransToken String?
   orderItem OrderItem[]
   user User @relation(fields: [userId], references: [id])
 }

@@ -179,7 +179,12 @@ export default function Home() {
             mendengar dari Anda! Kirim pesan kepada kami, dan kami akan segera
             menanggapi.
           </p>
-          <button className="btn btn-primary">Hubungi Kami Sekarang</button>
+          <Link
+            href={"mailto:mochiebyte@gmail.com"}
+            className="btn btn-primary"
+          >
+            Hubungi Kami Sekarang
+          </Link>
         </section>
       </div>
       <div className="container relative mx-auto p-8">
@@ -187,21 +192,30 @@ export default function Home() {
           <div className="text-center">
             <img src="/images/logo-big.png" className="w-full md:w-40" />
           </div>
-          <div className="flex flex-wrap items-end gap-12">
+          <div className="flex flex-wrap items-start gap-12">
             <div className="flex flex-col gap-4">
               <h2 className="text-3xl font-medium">Kontak</h2>
               <div className="flex flex-col gap-2">
-                <span>Alamat: Jl. Mochi No. 1, Jakarta</span>
+                <span>Alamat: Jurusan Teknik Informatika</span>
                 <span>
                   Email:{" "}
-                  <a href="mailto:mochie@mail.com" className="text-primary">
-                    mochie@mail.com{" "}
+                  <a
+                    href="mailto:mochiebyte@gmail.com"
+                    className="text-primary"
+                  >
+                    mochiebyte@gmail.com{" "}
                   </a>
                 </span>
                 <span>
-                  Telepon:{" "}
-                  <a href="tel:+62213456789" className="text-primary">
-                    +62 21 3456 789
+                  Cinda:{" "}
+                  <a href="tel:+6281258605454" className="text-primary">
+                    +62 812-5860-5454
+                  </a>
+                </span>
+                <span>
+                  Pute:{" "}
+                  <a href="tel:+6281348681514" className="text-primary">
+                    +62 813-4868-1514
                   </a>
                 </span>
               </div>
@@ -209,14 +223,12 @@ export default function Home() {
             <div className="flex flex-col gap-4">
               <h2 className="text-3xl font-medium">Ikuti Kami</h2>
               <div className="flex flex-col gap-2">
-                <a href="#" className="link">
+                <a
+                  href="https://www.instagram.com/mochiebyte/"
+                  className="link"
+                  target="_blank"
+                >
                   Instagram
-                </a>
-                <a href="#" className="link">
-                  Facebook
-                </a>
-                <a href="#" className="link">
-                  Twitter
                 </a>
               </div>
             </div>

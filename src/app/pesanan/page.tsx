@@ -9,6 +9,7 @@ interface Order {
   id: number;
   code: string;
   status: string;
+  midtransToken?: string;
   user: {
     name: string;
     email: string;
@@ -69,7 +70,7 @@ function PesananPage() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const orderCode = searchParams.get("code");
+    const orderCode = searchParams.get("code") || searchParams.get("order_id");
     if (orderCode) {
       setOrderCode(orderCode);
       handleSearch(orderCode);
@@ -153,6 +154,16 @@ function PesananPage() {
               <p>Telepon: {order.user.telpon}</p>
               <p>Alamat: {order.user.alamat}</p>
               <p>Pembayaran: {order.user.metode_pembayaran}</p>
+              {order.status === "menunggu-pembayaran" &&
+                order.user.metode_pembayaran === "midtrans" && (
+                  <Link
+                    href={`https://app.sandbox.midtrans.com/snap/v2/vtweb/${order.midtransToken}`}
+                    target="_blank"
+                    className="btn btn-primary mt-4"
+                  >
+                    Bayar Sekarang
+                  </Link>
+                )}
               {order.user.metode_pembayaran === "tf" && (
                 <>
                   <h3 className="mt-4 text-xl font-bold">Bukti Pembayaran</h3>
